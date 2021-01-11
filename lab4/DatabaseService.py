@@ -1,20 +1,17 @@
 import sqlite3
 from datetime import date
-from ApiService import getAverageExchangeRatesInDays
+from ApiService import getAverageExchangeRatesInDaysWithoutGaps
 
 
 def getPricesUsdPlnInHalfYear():
     dbConnection = sqlite3.connect("nwdatabase.db")
     dbCursor = dbConnection.cursor()
     dbCursor.execute('''SELECT 
-                    orderDate,
-                    SUM(UnitPrice * Quantity*(1-Discount)) AS UsdPrice,
-                    MAX(RateDate) AS RateDate,
-                    Exchange,
-                    SUM(UnitPrice * Quantity*(1-Discount)) * exchange AS PlnPrice
-                    FROM "Order Details" NATURAL JOIN Orders JOIN ExchangeUsdPln On orderDate>=rateDate
-                    WHERE OrderDate>="2017-11-06"
-                    GROUP BY OrderDate''')
+                    RateDate,
+                    sales,
+                    sales*exchange
+                    FROM DailyOrders JOIN ExchangeUsdPln ON RateDate=date
+                    WHERE RateDate>="2017-11-05"''')
     result = dbCursor.fetchall()
     dbConnection.close()
     return result
@@ -34,16 +31,10 @@ def createExchangeTable(dbCursor):
 
 
 def fillExchangeTable(dbCursor):
-    exchangeRates = getAverageExchangeRatesInDays('usd', 730, date(2018, 5, 6))
+    exchangeRates = getAverageExchangeRatesInDaysWithoutGaps('USD', 672, endDate=date(2018, 5, 6))
     for item in exchangeRates:
         dbCursor.execute('INSERT INTO ExchangeUsdPln VALUES(NULL, ?,?)', (item.effectiveDate, item.mid))
 
 
-if __name__ == '__main__':
-    dbConnection = sqlite3.connect("nwdatabase.db")
-    dbCursor = dbConnection.cursor()
-    dropExchangeTable(dbCursor)
-    createExchangeTable(dbCursor)
-    fillExchangeTable(dbCursor)
-    dbConnection.commit()
-    dbConnection.close()
+def select(dbCursor):
+    dbCursor.execute("Select * from 'Order Details'")

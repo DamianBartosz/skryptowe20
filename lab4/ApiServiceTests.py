@@ -2,7 +2,6 @@ import unittest
 from datetime import date, timedelta
 
 from ApiService import getAverageExchangeRatesInDays
-from Exceptions.ApiError import ApiError
 
 
 class GetAverageExchangeRatesInDaysTests(unittest.TestCase):
@@ -26,9 +25,9 @@ class GetAverageExchangeRatesInDaysTests(unittest.TestCase):
         firstDate = returnData[0].effectiveDate
         self.assertGreaterEqual(firstDate, startDate)
 
-    def testFuncRisesErrorForIncorrectInputs(self):
-        self.assertRaises(ApiError, getAverageExchangeRatesInDays, "12345", 10)
-        self.assertRaises(ApiError, getAverageExchangeRatesInDays, "USD", -4)
+    # def testFuncRisesErrorForIncorrectInputs(self):
+    #     self.assertRaises(ApiError, getAverageExchangeRatesInDays, "12345", 10)
+    #     self.assertRaises(ApiError, getAverageExchangeRatesInDays, "USD", -4)
 
 
 if __name__ == '__main__':

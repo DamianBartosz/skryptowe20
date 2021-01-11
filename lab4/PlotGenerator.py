@@ -5,7 +5,7 @@ from DatabaseService import getPricesUsdPlnInHalfYear
 
 
 def generateUsdAndEurOverHalfOfYearPlot():
-    (usd, eur) = getUsdAndEurOverHalfOfYear(date(2018, 5, 6))
+    usd, eur = getUsdAndEurOverHalfOfYear(date(2018, 5, 6))
     (usdMid, usdDates, eurMid, eurDates) = getUsdAndEurDataLists(usd, eur)
 
     plt.scatter(
@@ -23,25 +23,24 @@ def generateUsdAndEurOverHalfOfYearPlot():
     plt.savefig("UsdAndEurOverHalfOfYear.svg")
     plt.show()
 
+
 def generateUsdAndPlnPricesOverHalfOfYearPlot():
-    data = getPricesUsdPlnInHalfYear()
-    (usdPrices, plnPrices, dates) = getUsdAndPlnPricesDataLists(data)
+    (usdPrices, plnPrices, dates) = getUsdAndPlnPricesDataLists(getPricesUsdPlnInHalfYear())
 
-    plt.scatter(
-        dates, usdPrices, c="blue", edgecolor="black", linewidths=1, label="USD"
+    plt.plot(
+        dates, usdPrices, c="blue",  label="USD"
     )
 
-    plt.scatter(
-        dates, plnPrices, c="red", edgecolor="black", linewidths=1, label="PLN"
+    plt.plot(
+        dates, plnPrices, c="red",  label="PLN"
     )
 
-    plt.title("Plot of total sales in EUR and USD over six months")
+    plt.title("Plot of total sales in PLN and USD over six months")
     plt.xlabel("Date")
     plt.ylabel("Price")
     plt.legend()
     plt.savefig("UsdAndPlnInHalfYear.svg")
     plt.show()
-
 
 
 def getUsdAndPlnPricesDataLists(data):
@@ -50,7 +49,7 @@ def getUsdAndPlnPricesDataLists(data):
     dates = []
     for item in data:
         usdPrices.append(item[1])
-        plnPrices.append(item[4])
+        plnPrices.append(item[2])
         dates.append(date(*[int(item) for item in item[0].split('-')]))
 
     return usdPrices, plnPrices, dates
